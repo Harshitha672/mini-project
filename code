@@ -1,0 +1,116 @@
+//smart dying
+const int pinLDR = A0;
+const int pinRS = A1;
+int LEDa = 7;                      //variabel LED
+int LEDb = 6;
+int LEDc = 5;
+int LEDd = 4;
+int x=0;
+int C1=8;                         //variabel motor stepper
+int C2=9;
+int C3=10;
+int C4=11;
+
+int step = 25;                    //Motor Stepper
+int delaytime = 2;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pinLDR,INPUT);          //Led
+  pinMode(pinRS,INPUT);           //RS
+  pinMode(LEDa,OUTPUT);           
+  pinMode(LEDb,OUTPUT);           
+  pinMode(LEDc,OUTPUT);           
+  pinMode(LEDd,OUTPUT);           
+  pinMode(C1,OUTPUT);
+  pinMode(C2,OUTPUT);
+  pinMode(C3,OUTPUT);
+  pinMode(C4,OUTPUT);
+}
+
+float total;
+int dataLDR=0;                    // data LDR= 0
+int dataRS=0;                     // data RS=0
+
+void loop (){
+  dataLDR = analogRead(pinLDR);               
+  if(dataLDR>400) {digitalWrite(LEDa,HIGH);}  
+  else            {digitalWrite(LEDa,LOW);}   
+ Serial.print("Data LDR = ");                
+ Serial.println(dataLDR);                    
+  if(dataLDR<400) {digitalWrite(LEDb,HIGH);}  
+  else            {digitalWrite(LEDb,LOW);}   
+  
+ dataRS= analogRead(pinRS);                   
+  if(dataRS<900) {digitalWrite(LEDc,HIGH);}   
+  else            {digitalWrite(LEDc,LOW);}   
+ Serial.print("Data RS = ");                 
+ Serial.println(dataRS);                      
+  if(dataRS>900) {digitalWrite(LEDd,HIGH);} 
+  else            {digitalWrite(LEDd,LOW);}   
+total = (dataRS - (dataLDR+600));
+ Serial.print("total ");
+ Serial.println(total);
+  if (total<-10)
+  { if (x==1){
+ Serial.print("Team 14");
+ for (int i=0; i<2000; i++)
+ {backward(); } x=0;}
+}
+else if (total>-10)
+{ if(x==0) {
+ Serial.println("Team 14");
+ for (int i=0; i<2000; i++)
+ { forward(); } x=1;} 
+}
+
+delay(1000);}
+
+void backward(){
+  step4();
+  delay(delaytime);
+  step3();
+  delay(delaytime);
+  step2();
+  delay(delaytime);
+  step1();
+  delay(delaytime);
+}
+void forward(){
+  step1();
+  delay(delaytime);
+  step2();
+  delay(delaytime);
+  step3();
+  delay(delaytime);
+  step4();
+  delay(delaytime);
+}
+void step1(){
+  digitalWrite(C1,LOW);
+  digitalWrite(C2,LOW);
+  digitalWrite(C3,HIGH);
+  digitalWrite(C4,HIGH);}
+void step2(){
+  digitalWrite(C1,HIGH);
+  digitalWrite(C2,LOW);
+  digitalWrite(C3,LOW);
+  digitalWrite(C4,HIGH);}
+void step3(){
+  digitalWrite(C1,HIGH);
+  digitalWrite(C2,HIGH);
+  digitalWrite(C3,LOW);
+  digitalWrite(C4,LOW);}
+void step4(){
+  digitalWrite(C1,LOW);
+  digitalWrite(C2,HIGH);
+  digitalWrite(C3,HIGH);
+  digitalWrite(C4,LOW);}
+
+
+Arduino Microcontroller: The code is written for an Arduino board, which is a microcontroller platform used for building various electronics projects.
+LDR (Light Dependent Resistor) Sensor: It senses the ambient light level. The code reads analog data from the LDR sensor connected to pin A0.
+RS (Rain Sensor): It detects rain or moisture. The code reads analog data from the RS sensor connected to pin A1.
+Stepper Motor: The code controls a stepper motor connected to pins 8, 9, 10, and 11 (C1, C2, C3, C4). Stepper motors are commonly used in projects requiring precise control over rotational motion.
+LEDs: Light Emitting Diodes are used as indicators. There are four LEDs connected to pins 4, 5, 6, and 7, indicating various states such as light intensity and rain detection.
+Serial Communication: The code communicates with an external device (such as a computer) via serial communication. It uses Serial.begin(9600) to initialize serial communication and Serial.print() to output data to the serial monitor for debugging purposes.
